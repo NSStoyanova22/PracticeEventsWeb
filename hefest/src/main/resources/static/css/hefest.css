@@ -1,0 +1,641 @@
+:root {
+    color-scheme: light;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #f5f5f5;
+    color: #222;
+    line-height: 1.5;
+}
+
+a {
+    color: inherit;
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: .65rem;
+    color: #222;
+    text-decoration: none;
+}
+
+.brand-mark {
+    display: inline-grid;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+    background: #222;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: .08em;
+}
+
+.brand-name {
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-size: .88rem;
+}
+
+.main-nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: .9rem;
+}
+
+.main-nav a {
+    text-decoration: none;
+}
+
+.main-nav a:hover,
+.back-link:hover,
+.event-link:hover {
+    text-decoration: underline;
+}
+
+.nav-divider {
+    width: 1px;
+    height: 1.2rem;
+    background: #d2d2d2;
+}
+
+.user-name {
+    color: #666;
+    font-size: .85rem;
+}
+
+.page-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 2rem;
+    margin: 2rem 0 1.5rem;
+}
+
+.eyebrow {
+    margin: 0 0 .45rem;
+    color: #777;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .16em;
+}
+
+h1 {
+    margin: 0;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    line-height: 1.15;
+}
+
+.lead {
+    max-width: 34rem;
+    margin: .65rem 0 0;
+    color: #666;
+}
+
+.button,
+.event-form button,
+.registration-form button {
+    display: inline-block;
+    border: 1px solid #222;
+    padding: .7rem 1rem;
+    background: #fff;
+    color: #222;
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.button-primary,
+.event-form button,
+.registration-form button {
+    background: #222;
+    color: #fff;
+}
+
+.button:hover,
+.event-form button:hover,
+.registration-form button:hover {
+    opacity: .82;
+}
+
+.inline-form {
+    display: inline;
+    margin: 0;
+}
+
+.link-button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.site-header,
+.site-main,
+.site-footer {
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.site-header {
+    max-width: 960px;
+    padding: 1.25rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.site-main {
+    max-width: 960px;
+    padding: 1rem;
+}
+
+.event-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.event-card {
+    display: block;
+    padding: 1.25rem;
+    color: inherit;
+    text-decoration: none;
+    background: white;
+    border: 1px solid #ddd;
+    transition: border-color .15s ease, transform .15s ease;
+}
+
+.event-card:hover {
+    border-color: #555;
+    transform: translateY(-2px);
+}
+
+.event-card h2 {
+    margin: .55rem 0 .7rem;
+    font-size: 1.25rem;
+}
+
+.event-card-topline {
+    min-height: 1.2rem;
+}
+
+.event-status {
+    display: inline-block;
+    padding: .18rem .45rem;
+    background: #e7f6ea;
+    color: #27733a;
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+}
+
+.event-status-full {
+    background: #fff0f0;
+    color: #a11;
+}
+
+.event-description {
+    color: #555;
+}
+
+.event-card .event-description {
+    min-height: 3rem;
+    margin: 0;
+}
+
+.capacity-summary,
+.detail-capacity {
+    margin-top: 1.25rem;
+}
+
+.capacity-labels {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: #666;
+    font-size: .82rem;
+}
+
+.capacity-labels strong {
+    color: #222;
+}
+
+.capacity-track {
+    height: .38rem;
+    margin-top: .45rem;
+    overflow: hidden;
+    background: #e4e4e4;
+}
+
+.capacity-fill {
+    display: block;
+    height: 100%;
+    min-width: 0;
+    background: #222;
+}
+
+.is-full .capacity-fill {
+    background: #a11;
+}
+
+.event-link {
+    display: block;
+    margin-top: 1.3rem;
+    font-size: .85rem;
+    font-weight: 700;
+}
+
+.capacity {
+    color: #666;
+    font-size: .9rem;
+}
+
+.empty {
+    padding: 2rem;
+    background: white;
+    border: 1px solid #ddd;
+}
+
+.form-page {
+    max-width: 760px;
+}
+
+.back-link {
+    display: inline-block;
+    margin: 1rem 0;
+    color: #555;
+    font-size: .85rem;
+    text-decoration: none;
+}
+
+.event-form {
+    padding: 1.5rem;
+    background: white;
+    border: 1px solid #ddd;
+}
+
+.event-form label {
+    display: block;
+    margin-top: 1rem;
+    font-size: .9rem;
+}
+
+.event-form input,
+.event-form textarea {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    padding: .65rem;
+    margin-top: .35rem;
+    font: inherit;
+}
+
+.event-form textarea {
+    min-height: 8rem;
+    resize: vertical;
+}
+
+.field-error {
+    display: block;
+    margin-top: .35rem;
+    color: #a11;
+    font-size: .85rem;
+}
+
+.event-form button {
+    margin-top: 1.25rem;
+    padding: .7rem 1rem;
+    cursor: pointer;
+}
+
+.site-footer {
+    max-width: 960px;
+    padding: 2rem 1rem;
+    color: #666;
+    text-align: center;
+    font-size: .85rem;
+}
+
+.detail-header,
+.detail-main,
+.detail-footer {
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.detail-header {
+    padding: 1.25rem 1rem;
+}
+
+.detail-main {
+    padding: 1rem;
+}
+
+.event-detail {
+    padding: 1.5rem;
+    background: white;
+    border: 1px solid #ddd;
+}
+
+.detail-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 1rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.detail-description {
+    margin: 1.5rem 0;
+    white-space: pre-line;
+}
+
+.registration-state {
+    padding: .75rem 1rem;
+    border-left: 3px solid #27733a;
+    background: #e7f6ea;
+}
+
+.full-state {
+    border-left-color: #a11;
+    background: #fff0f0;
+}
+
+.event-detail h1 {
+    margin-top: 0;
+}
+
+.message {
+    padding: .75rem 1rem;
+    margin-bottom: 1rem;
+    background: #e7f6ea;
+    border: 1px solid #9bd3a2;
+}
+
+.message.error {
+    background: #fff0f0;
+    border-color: #e0a0a0;
+}
+
+.registration-form {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #ddd;
+}
+
+.registration-form label {
+    display: block;
+    margin-top: .75rem;
+    font-size: .9rem;
+}
+
+.registration-form input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: .65rem;
+    margin-top: .35rem;
+}
+
+.registration-form button {
+    margin-top: 1rem;
+}
+
+.detail-footer {
+    padding: 2rem 1rem;
+    color: #666;
+    text-align: center;
+    font-size: .85rem;
+}
+
+.reports-page {
+    max-width: 1040px;
+}
+.page-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.reports-heading {
+    margin-bottom: 1.25rem;
+}
+
+.report-filter {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    align-items: end;
+    padding: 1.25rem;
+    background: #fff;
+    border: 1px solid #ddd;
+}
+
+.report-date-field label {
+    display: block;
+    margin-bottom: .35rem;
+    color: #555;
+    font-size: .82rem;
+    font-weight: 700;
+}
+
+.report-date-field input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: .7rem;
+    border: 1px solid #ccc;
+    background: #fff;
+    color: #222;
+    font: inherit;
+}
+
+.report-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem;
+    padding-top: .25rem;
+}
+
+.report-actions .button {
+    font-size: .88rem;
+}
+
+.report-results {
+    margin-top: 2rem;
+}
+
+.report-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.report-stat {
+    display: flex;
+    min-height: 8rem;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.25rem;
+    background: #222;
+    color: #fff;
+}
+
+.report-stat-wide {
+    background: #e7f6ea;
+    color: #222;
+}
+
+.report-stat-label {
+    color: #bbb;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+
+.report-stat-wide .report-stat-label {
+    color: #27733a;
+}
+
+.report-stat strong {
+    margin: .4rem 0;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    line-height: 1.1;
+}
+
+.report-stat-note {
+    color: #aaa;
+    font-size: .82rem;
+}
+
+.report-stat-wide .report-stat-note {
+    color: #4c7655;
+}
+
+.report-list-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 2.5rem 0 1rem;
+}
+
+.report-list-heading h2 {
+    margin: 0;
+    font-size: 1.35rem;
+}
+
+.report-period {
+    padding: .45rem .7rem;
+    background: #f0f0f0;
+    color: #666;
+    font-size: .82rem;
+}
+
+.report-table-wrap {
+    overflow-x: auto;
+    background: #fff;
+    border: 1px solid #ddd;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+}
+
+.report-table th,
+.report-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #e5e5e5;
+    text-align: left;
+}
+
+.report-table th {
+    background: #fafafa;
+    color: #666;
+    font-size: .75rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.report-table td {
+    font-size: .92rem;
+}
+
+.report-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.report-table tbody tr:hover {
+    background: #fafafa;
+}
+
+.report-empty {
+    margin-top: 0;
+}
+
+@media (max-width: 680px) {
+    .site-header {
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .main-nav {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: .55rem .8rem;
+    }
+
+    .nav-divider {
+        display: none;
+    }
+
+    .page-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .button-primary {
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+    .detail-heading,
+    .capacity-labels {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: .35rem;
+    }
+
+    .report-filter,
+    .report-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .report-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .report-actions .button:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .report-list-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

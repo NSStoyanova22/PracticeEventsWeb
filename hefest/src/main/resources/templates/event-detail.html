@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${event.title} + ' | HefestQueue'">Детайли | HefestQueue</title>
+    <link rel="stylesheet" th:href="@{/css/hefest.css}" />
+</head>
+<body>
+<header th:replace="~{fragments :: navigation}"></header>
+<main class="detail-main">
+    <a class="back-link" th:href="@{/events}">← Назад към събитията</a>
+    <p class="message" th:if="${successMessage}" th:text="${successMessage}">Успешно се регистрирахте за събитието.</p>
+    <p class="message error" th:if="${errorMessage}" th:text="${errorMessage}">Регистрацията не беше извършена.</p>
+    <article class="event-detail">
+        <div class="detail-heading">
+            <div>
+                <p class="eyebrow">СЪБИТИЕ</p>
+                <h1 th:text="${event.title}">Заглавие на събитие</h1>
+            </div>
+            <span class="event-status" th:if="${availablePlaces > 0}">ОТВОРЕНО</span>
+            <span class="event-status event-status-full" th:if="${availablePlaces == 0}">ПЪЛНО</span>
+        </div>
+        <p class="event-description detail-description" th:text="${event.description}">Описание на събитието</p>
+        <div class="detail-capacity">
+            <div class="capacity-labels">
+                <span><strong th:text="${registeredCount}">0</strong> / <span th:text="${event.capacity}">0</span> регистрирани</span>
+                <span th:if="${availablePlaces > 0}" th:text="${availablePlaces + ' свободни места'}">0 свободни места</span>
+                <span th:if="${availablePlaces == 0}">Няма свободни места</span>
+            </div>
+            <div class="capacity-track" aria-hidden="true">
+                <span class="capacity-fill" th:style="|width: ${capacityPercent}%|"></span>
+            </div>
+        </div>
+
+        <div th:if="${currentUser != null and currentUserRegistered}">
+        <form class="registration-form" th:action="@{/events/{id}/registrations/cancel(id=${event.id})}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <p class="registration-state success-state">✓ Вие сте регистрирани за това събитие.</p>
+            <button type="submit">Отмени регистрацията</button>
+        </form>
+        </div>
+        <div th:if="${currentUser != null and !currentUserRegistered and availablePlaces > 0}">
+        <form class="registration-form" th:action="@{/events/{id}/registrations(id=${event.id})}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit">Регистрирай се</button>
+        </form>
+        </div>
+        <p class="registration-state full-state" th:if="${currentUser != null and !currentUserRegistered and availablePlaces == 0}">Събитието е пълно.</p>
+        <p th:if="${currentUser == null}">Моля, <a th:href="@{/login}">влезте в профила си</a>, за да се регистрирате.</p>
+    </article>
+</main>
+<footer class="detail-footer">HefestQueue — Платформа за училищни събития и уъркшопи.</footer>
+</body>
+</html>

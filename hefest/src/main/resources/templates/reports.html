@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отчети | HefestQueue</title>
+    <link rel="stylesheet" th:href="@{/css/hefest.css}" />
+</head>
+<body>
+<header th:replace="~{fragments :: navigation}"></header>
+
+<main class="site-main reports-page">
+    <section class="page-heading reports-heading">
+        <div>
+            <p class="eyebrow">HEFESTQUEUE</p>
+            <div class="page-header-content">
+            <h1>Отчети</h1> <button class="button button-primary" type="submit" form="reportFilterForm" id="reportFilter" th:formaction="@{/reports/pdf}" formmethod="get">Генерирай PDF</button>
+            </div>
+            <p class="lead">Проследи активността на събитията и регистрациите за избран период.</p>
+        </div>
+    </section>
+
+    <form class="report-filter" id="reportFilterForm" th:action="@{/reports}" method="get">
+        <div class="report-date-field">
+            <label for="reportDateFrom">Начална дата</label>
+            <input id="reportDateFrom" name="from" type="date" th:value="${from}" required>
+        </div>
+
+        <div class="report-date-field">
+            <label for="reportDateTo">Крайна дата</label>
+            <input id="reportDateTo" name="to" type="date" th:value="${to}" required>
+        </div>
+
+        <div class="report-actions">
+            <button class="button button-primary" type="submit">Генерирай отчет</button>
+            <button class="button" type="button" data-months="1">1 месец</button>
+            <button class="button" type="button" data-months="6">6 месеца</button>
+            <button class="button" type="button" data-months="12">12 месеца</button>
+        </div>
+    </form>
+
+    <p class="message error" th:if="${errorMessage != null}" th:text="${errorMessage}"></p>
+
+    <section class="report-results" th:if="${reports != null}">
+        <div class="report-summary">
+            <article class="report-stat">
+                <span class="report-stat-label">Събития</span>
+                <strong th:text="${numberOfEvents}">0</strong>
+                <span class="report-stat-note">в избрания период</span>
+            </article>
+            <article class="report-stat">
+                <span class="report-stat-label">Регистрации</span>
+                <strong th:text="${numberOfRegistered}">0</strong>
+                <span class="report-stat-note">общо записани места</span>
+            </article>
+            <article class="report-stat report-stat-wide" th:if="${mostPopularEvent != null}">
+                <span class="report-stat-label">Най-популярно събитие</span>
+                <strong th:text="${mostPopularEvent.title}">-</strong>
+                <span class="report-stat-note" th:text="${mostPopularEvent.registrations + ' регистрации'}">0 регистрации</span>
+            </article>
+        </div>
+
+        <div class="report-list-heading">
+            <div>
+                <p class="eyebrow">ДЕТАЙЛИ</p>
+                <h2>Събития в периода</h2>
+            </div>
+            <span class="report-period" th:text="${from + ' — ' + to}">Период</span>
+        </div>
+
+        <div class="empty report-empty" th:if="${#lists.isEmpty(reports)}">
+            <h2>Няма събития за този период</h2>
+            <p>Избери друг период или създай ново събитие с дата.</p>
+        </div>
+
+        <div class="report-table-wrap" th:if="${not #lists.isEmpty(reports)}">
+        <table class="report-table">
+            <thead>
+            <tr>
+                <th>Събитие</th>
+                <th>Дата</th>
+                <th>Регистрации</th>
+                <th>Капацитет</th>
+                <th>Свободни места</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="report : ${reports}">
+                <td th:text="${report.title}">Събитие</td>
+                <td th:text="${report.eventDate}">-</td>
+                <td th:text="${report.registrations}">0</td>
+                <td th:text="${report.capacity}">0</td>
+                <td th:text="${report.availableSpots}">0</td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+    </section>
+</main>
+
+<script>
+    const fromInput = document.getElementById("reportDateFrom");
+    const toInput = document.getElementById("reportDateTo");
+    const form = fromInput.form;
+
+    function formatDate(date) {
+        return date.toISOString().slice(0, 10);
+    }
+
+    document.querySelectorAll("[data-months]").forEach(button => {
+        button.addEventListener("click", () => {
+            const to = new Date();
+            const from = new Date(to);
+            from.setMonth(from.getMonth() - Number(button.dataset.months));
+
+            fromInput.value = formatDate(from);
+            toInput.value = formatDate(to);
+            form.submit();
+        });
+    });
+</script>
+</body>
+</html>

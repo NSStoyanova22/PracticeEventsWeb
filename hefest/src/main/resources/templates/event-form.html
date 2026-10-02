@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Създай събитие | HefestQueue</title>
+    <link rel="stylesheet" th:href="@{/css/hefest.css}" />
+</head>
+<body>
+<header th:replace="~{fragments :: navigation}"></header>
+
+<main class="site-main form-page">
+    <a class="back-link" th:href="@{/events}">← Назад към събитията</a>
+    <h1>Създай събитие</h1>
+    <form class="event-form" th:action="@{/events}" th:object="${event}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <label for="title">Заглавие</label>
+        <input id="title" type="text" th:field="*{title}" required="required" />
+        <span class="field-error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+
+    <label for="description">Описание</label>
+    <textarea id="description" th:field="*{description}" required="required"></textarea>
+    <span class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
+
+        <label for="date">Дата</label>
+        <input id="date" type="date" th:field="*{date}" required="required" />
+        <span class="field-error" th:if="${#fields.hasErrors('date')}" th:errors="*{date}"></span>
+
+        <label for="capacity">Капацитет</label>
+        <input id="capacity" type="number" min="1" th:field="*{capacity}" required="required" />
+        <span class="field-error" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}"></span>
+
+        <button type="submit">Създай събитие</button>
+    </form>
+</main>
+
+<footer class="site-footer">HefestQueue — Платформа за училищни събития и уъркшопи.</footer>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Вход | HefestQueue</title>
+    <link rel="stylesheet" th:href="@{/css/hefest.css}" />
+</head>
+<body>
+<header th:replace="~{fragments :: navigation}"></header>
+
+<main class="site-main form-page">
+    <p class="eyebrow">HEFESTQUEUE</p>
+    <h1>Вход в профила</h1>
+    <p class="lead">Влезте, за да запазите място за събитие.</p>
+    <p class="message error" th:if="${loginError}">Невалиден имейл или парола.</p>
+    <p class="message" th:if="${registered}">Регистрацията е успешна. Влезте в профила си.</p>
+    <form class="event-form" th:action="@{/login}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <label for="email">Имейл</label>
+        <input id="email" name="email" type="email" required="required" />
+
+        <label for="password">Парола</label>
+        <input id="password" name="password" type="password" required="required" />
+
+        <button type="submit">Вход</button>
+    </form>
+</main>
+
+<footer class="site-footer">HefestQueue — Платформа за училищни събития и уъркшопи.</footer>
+</body>
+</html>

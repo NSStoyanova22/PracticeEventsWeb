@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Събития | HefestQueue</title>
+    <link rel="stylesheet" th:href="@{/css/hefest.css}" />
+</head>
+<body>
+<header th:replace="~{fragments :: navigation}"></header>
+<main class="site-main">
+    <section class="page-heading">
+        <div>
+            <p class="eyebrow">HEFESTQUEUE</p>
+            <h1>Предстоящи събития</h1>
+            <p class="lead">Открийте следващото събитие и запазете своето място.</p>
+        </div>
+        <a class="button button-primary" th:href="@{/events/new}">+ Създай събитие</a>
+    </section>
+
+    <div class="event-grid" th:if="${not #lists.isEmpty(events)}">
+        <a class="event-card" th:each="event : ${events}"
+           th:classappend="${availablePlaces[event.id] == 0} ? ' is-full' : ''"
+           th:href="@{/events/{id}(id=${event.id})}">
+            <div class="event-card-topline">
+                <span class="event-status" th:if="${availablePlaces[event.id] > 0}">ОТВОРЕНО</span>
+                <span class="event-status event-status-full" th:if="${availablePlaces[event.id] == 0}">ПЪЛНО</span>
+            </div>
+            <h2 th:text="${event.title}">Заглавие на събитие</h2>
+            <p class="event-description" th:text="${event.description}">Описание на събитието</p>
+            <div class="capacity-summary">
+                <div class="capacity-labels">
+                    <span><strong th:text="${registeredCounts[event.id]}">0</strong> / <span th:text="${event.capacity}">0</span> регистрирани</span>
+                    <span th:if="${availablePlaces[event.id] > 0}" th:text="${availablePlaces[event.id] + ' свободни'}">0 свободни</span>
+                    <span th:if="${availablePlaces[event.id] == 0}">Няма свободни места</span>
+                </div>
+                <div class="capacity-track" aria-hidden="true">
+                    <span class="capacity-fill" th:style="|width: ${capacityPercent[event.id]}%|"></span>
+                </div>
+            </div>
+            <span class="event-link">Виж детайли <span aria-hidden="true">→</span></span>
+        </a>
+    </div>
+    <div class="empty" th:if="${#lists.isEmpty(events)}">
+        <h2>Все още няма събития</h2>
+        <p>Създайте първото събитие, за да започнете.</p>
+        <a class="button button-primary" th:href="@{/events/new}">Създай събитие</a>
+    </div>
+</main>
+<footer class="site-footer">HefestQueue — Платформа за училищни събития и уъркшопи.</footer>
+</body>
+</html>
