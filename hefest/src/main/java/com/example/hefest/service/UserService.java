@@ -9,6 +9,9 @@ import java.util.List;
 import com.example.hefest.model.Role;
 import com.example.hefest.model.UserForm;
 import java.util.Locale;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 @Service
 public class UserService {
@@ -36,6 +39,30 @@ public class UserService {
     }
     public List<User> findAllUsers() {
         return userRepository.findAllByOrderByNameAsc();
+    }
+
+    public Page<User> searchUsers(String search, String sort, String direction, int page, int size) {
+        String normalizedSearch = search == null ? "" : search.trim();
+        String sortProperty = switch (sort == null ? "" : sort) {
+            case "email" -> "email";
+            case "phone" -> "phone";
+            case "role" -> "role";
+            case "active" -> "active";
+            default -> "name";
+        };
+        Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction)
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+        int safePage = Math.max(page, 0);
+        int safeSize = Math.min(Math.max(size, 1), 100);
+        PageRequest pageRequest = PageRequest.of(safePage, safeSize,
+                Sort.by(sortDirection, sortProperty).and(Sort.by(Sort.Direction.ASC, "id")));
+
+        if (normalizedSearch.isEmpty()) {
+            return userRepository.findAll(pageRequest);
+        }
+        return userRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrPhoneContainingIgnoreCase(
+                normalizedSearch, normalizedSearch, normalizedSearch, pageRequest);
     }
     public User createUser(UserForm form) {
         String email = form.getEmail().trim().toLowerCase(Locale.ROOT);

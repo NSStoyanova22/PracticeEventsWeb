@@ -5,11 +5,10 @@ import com.example.hefest.model.Role;
 import com.example.hefest.model.User;
 import com.example.hefest.model.UserForm;
 import com.example.hefest.service.UserService;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import com.example.hefest.model.User;
-
 import java.util.List;
 
 @Controller 
@@ -23,8 +22,24 @@ public class UserManagementController {
         return List.of(Role.ADMIN, Role.USER);
     }
     @GetMapping
-    public String listUsers(Model model) {
-        model.addAttribute("users", userService.findAllUsers());
+    public String listUsers(
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "name") String sort,
+            @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
+        Page<User> users = userService.searchUsers(search, sort, direction, page, size);
+        String currentSort = switch (sort) {
+            case "email", "phone", "role", "active" -> sort;
+            default -> "name";
+        };
+        String currentDirection = "desc".equalsIgnoreCase(direction) ? "desc" : "asc";
+        model.addAttribute("users", users);
+        model.addAttribute("search", search == null ? "" : search);
+        model.addAttribute("sort", currentSort);
+        model.addAttribute("direction", currentDirection);
+        model.addAttribute("size", Math.min(Math.max(size, 1), 100));
         return "admin/users";
     }
     @GetMapping ("/new")

@@ -33,6 +33,9 @@ public class ReportController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @RequestParam(required = false) String week,
+            @RequestParam(defaultValue = "date") String sort,
+            @RequestParam(defaultValue = "asc") String direction,
             Model model) {
         if (from == null && to == null) {
             to = LocalDate.now();
@@ -41,10 +44,13 @@ public class ReportController {
 
         model.addAttribute("from", from);
         model.addAttribute("to", to);
+        model.addAttribute("week", week == null ? "" : week);
+        model.addAttribute("sort", sort);
+        model.addAttribute("direction", direction);
 
         if (from != null && to != null) {
             try {
-                var reports = reportService.generateReport(from, to);
+                var reports = reportService.generateReport(from, to, week, sort, direction);
                 long totalRegistrations = reports.stream()
                         .mapToLong(ReportService.EventReport::registrations)
                         .sum();
@@ -52,6 +58,9 @@ public class ReportController {
                 model.addAttribute("reports", reports);
                 model.addAttribute("numberOfEvents", reports.size());
                 model.addAttribute("numberOfRegistered", totalRegistrations);
+                model.addAttribute("totalRevenue", reports.stream()
+                        .map(ReportService.EventReport::revenue)
+                        .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add));
                 model.addAttribute("mostPopularEvent", reports.stream()
                         .max(java.util.Comparator.comparingLong(ReportService.EventReport::registrations))
                         .orElse(null));
@@ -68,8 +77,15 @@ public class ReportController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @RequestParam(required = false) String week,
+            @RequestParam(defaultValue = "date") String sort,
+            @RequestParam(defaultValue = "asc") String direction,
             Model model) {
-                byte[] pdfReport = pdfReportService.generatePdfReport("Event Report", from, to);
+                if (from == null || to == null) {
+                    to = LocalDate.now();
+                    from = to.minusMonths(12);
+                }
+                byte[] pdfReport = pdfReportService.generatePdfReport("Event Report", from, to, week, sort, direction);
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_PDF);
                 headers.setContentDisposition(ContentDisposition.attachment().filename("event-report.pdf").build());

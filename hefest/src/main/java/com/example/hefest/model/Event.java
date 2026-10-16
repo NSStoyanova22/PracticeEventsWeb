@@ -9,6 +9,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.math.BigDecimal;
 
 @Entity
 public class Event {
@@ -26,6 +28,11 @@ public class Event {
     @NotNull(message = "Датата е задължителна.")
     private LocalDate date;
 
+    private LocalTime time;
+
+    @jakarta.validation.constraints.DecimalMin(value = "0.00", message = "Цената не може да бъде отрицателна.")
+    private BigDecimal price = BigDecimal.ZERO;
+
     @Min(value = 1, message = "Капацитетът трябва да бъде поне 1.")
     private int capacity;
 
@@ -40,6 +47,10 @@ public class Event {
     public void setDescription(String description) { this.description = description; }
     public LocalDate getDate() { return date; }
     public void setDate(LocalDate date) { this.date = date; }
+    public LocalTime getTime() { return time; }
+    public void setTime(LocalTime time) { this.time = time; }
+    public BigDecimal getPrice() { return price; }
+    public void setPrice(BigDecimal price) { this.price = price; }
     public int getCapacity() { return capacity; }
     public void setCapacity(int capacity) { this.capacity = capacity; }
 }

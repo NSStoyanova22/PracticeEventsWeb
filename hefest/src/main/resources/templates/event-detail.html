@@ -21,6 +21,7 @@
             <span class="event-status" th:if="${availablePlaces > 0}">ОТВОРЕНО</span>
             <span class="event-status event-status-full" th:if="${availablePlaces == 0}">ПЪЛНО</span>
         </div>
+        <p class="event-meta" th:text="${event.date + (event.time != null ? ' · ' + event.time : '') + ' · ' + (event.price != null ? #numbers.formatDecimal(event.price, 1, 2) : '0.00') + ' лв. на регистрация'}">Дата · Цена</p>
         <p class="event-description detail-description" th:text="${event.description}">Описание на събитието</p>
         <div class="detail-capacity">
             <div class="capacity-labels">

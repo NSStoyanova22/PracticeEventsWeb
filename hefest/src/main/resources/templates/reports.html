@@ -31,6 +31,28 @@
             <input id="reportDateTo" name="to" type="date" th:value="${to}" required>
         </div>
 
+        <div class="report-date-field">
+            <label for="reportWeek">Седмица</label>
+            <input id="reportWeek" name="week" type="week" th:value="${week}">
+        </div>
+
+        <div class="report-date-field">
+            <label for="reportSort">Сортиране</label>
+            <select id="reportSort" name="sort">
+                <option value="date" th:selected="${sort == 'date'}">Дата</option>
+                <option value="day" th:selected="${sort == 'day'}">Ден от седмицата</option>
+                <option value="time" th:selected="${sort == 'time'}">Час</option>
+            </select>
+        </div>
+
+        <div class="report-date-field">
+            <label for="reportDirection">Посока</label>
+            <select id="reportDirection" name="direction">
+                <option value="asc" th:selected="${direction == 'asc'}">Възходящо</option>
+                <option value="desc" th:selected="${direction == 'desc'}">Низходящо</option>
+            </select>
+        </div>
+
         <div class="report-actions">
             <button class="button button-primary" type="submit">Генерирай отчет</button>
             <button class="button" type="button" data-months="1">1 месец</button>
@@ -47,6 +69,11 @@
                 <span class="report-stat-label">Събития</span>
                 <strong th:text="${numberOfEvents}">0</strong>
                 <span class="report-stat-note">в избрания период</span>
+            </article>
+            <article class="report-stat">
+                <span class="report-stat-label">Събрани средства</span>
+                <strong th:text="${#numbers.formatDecimal(totalRevenue, 1, 2) + ' лв.'}">0.00 лв.</strong>
+                <span class="report-stat-note">за избрания период</span>
             </article>
             <article class="report-stat">
                 <span class="report-stat-label">Регистрации</span>
@@ -79,18 +106,24 @@
             <tr>
                 <th>Събитие</th>
                 <th>Дата</th>
+                <th>Час</th>
+                <th>Цена</th>
                 <th>Регистрации</th>
                 <th>Капацитет</th>
                 <th>Свободни места</th>
+                <th>Приход</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="report : ${reports}">
                 <td th:text="${report.title}">Събитие</td>
                 <td th:text="${report.eventDate}">-</td>
+                <td th:text="${report.eventTime != null ? report.eventTime : '-'}">-</td>
+                <td th:text="${#numbers.formatDecimal(report.price, 1, 2) + ' лв.'}">0.00 лв.</td>
                 <td th:text="${report.registrations}">0</td>
                 <td th:text="${report.capacity}">0</td>
                 <td th:text="${report.availableSpots}">0</td>
+                <td th:text="${#numbers.formatDecimal(report.revenue, 1, 2) + ' лв.'}">0.00 лв.</td>
             </tr>
             </tbody>
         </table>

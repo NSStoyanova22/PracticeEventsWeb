@@ -1,7 +1,6 @@
 package com.example.hefest.service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -22,8 +21,9 @@ public class PdfReportService {
     public PdfReportService(ReportService reportService) {
         this.reportService = reportService;
     }
-    public byte[] generatePdfReport(String title, LocalDate from, LocalDate to ) {
-        List<EventReport> reports = reportService.generateReport(from, to);
+    public byte[] generatePdfReport(String title, LocalDate from, LocalDate to,
+                                    String week, String sort, String direction) {
+        List<EventReport> reports = reportService.generateReport(from, to, week, sort, direction);
      ByteArrayOutputStream outputStream =
                 new ByteArrayOutputStream();
 
@@ -46,19 +46,28 @@ public class PdfReportService {
             document.add(new Paragraph(
                     "Number of events: " + reports.size()
             ));
+            document.add(new Paragraph(
+                    "Total revenue: " + reports.stream().map(EventReport::revenue)
+                            .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add) + " BGN"
+            ));
 
-            PdfPTable table = new PdfPTable(5);
+            PdfPTable table = new PdfPTable(7);
 
             table.addCell("Event");
             table.addCell("Date");
+            table.addCell("Time");
+            table.addCell("Price");
             table.addCell("Registrations");
             table.addCell("Capacity");
             table.addCell("Available spots");
+            table.addCell("Revenue");
 
             for (EventReport report : reports) {
 
                 table.addCell(report.title());
                 table.addCell(report.eventDate().toString());
+                table.addCell(report.eventTime() == null ? "-" : report.eventTime().toString());
+                table.addCell(report.price() + " BGN");
                 table.addCell(
                         String.valueOf(report.registrations())
                 );
@@ -68,6 +77,7 @@ public class PdfReportService {
                 table.addCell(
                         String.valueOf(report.availableSpots())
                 );
+                table.addCell(report.revenue() + " BGN");
             }
 
             document.add(table);

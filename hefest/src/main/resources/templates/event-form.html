@@ -26,6 +26,14 @@
         <input id="date" type="date" th:field="*{date}" required="required" />
         <span class="field-error" th:if="${#fields.hasErrors('date')}" th:errors="*{date}"></span>
 
+        <label for="time">Час</label>
+        <input id="time" type="time" th:field="*{time}" required="required" />
+        <span class="field-error" th:if="${#fields.hasErrors('time')}" th:errors="*{time}"></span>
+
+        <label for="price">Цена (лв.)</label>
+        <input id="price" type="number" min="0" step="0.01" th:field="*{price}" required="required" />
+        <span class="field-error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
+
         <label for="capacity">Капацитет</label>
         <input id="capacity" type="number" min="1" th:field="*{capacity}" required="required" />
         <span class="field-error" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}"></span>
