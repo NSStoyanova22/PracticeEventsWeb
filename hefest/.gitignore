@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Uploaded media ###
+uploads/
+admin-credentials.local.txt

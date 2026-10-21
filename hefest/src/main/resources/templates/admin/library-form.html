@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${isEdit} ? 'Редактирай ресурс | HefestQueue' : 'Нов ресурс | HefestQueue'">Нов ресурс | HefestQueue</title>
+    <link rel="stylesheet" th:href="@{/css/hefest.css}" />
+</head>
+<body>
+<header th:replace="~{fragments :: navigation}"></header>
+
+<main class="site-main form-page">
+    <a class="back-link" th:if="${isEdit}" th:href="@{/library/{id}(id=${libraryResource.id})}">← Назад към ресурса</a>
+    <a class="back-link" th:unless="${isEdit}" th:href="@{/library}">← Назад към библиотеката</a>
+    <h1 th:text="${isEdit} ? 'Редактирай ресурс' : 'Нов ресурс'">Нов ресурс</h1>
+
+    <p class="message error" th:if="${errorMessage}" th:text="${errorMessage}">Грешка</p>
+
+    <form class="event-form" method="post" enctype="multipart/form-data" th:object="${libraryResource}"
+          th:action="${isEdit} ? @{/admin/library/{id}(id=*{id})} : @{/admin/library}">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <label for="title">Заглавие</label>
+        <input id="title" type="text" th:field="*{title}" required="required" maxlength="255" />
+        <span class="field-error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+
+        <label for="description">Описание</label>
+        <textarea id="description" class="library-textarea" th:field="*{description}" required="required"></textarea>
+        <span class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
+
+        <fieldset class="library-media-field" th:if="${isEdit and not #lists.isEmpty(libraryResource.images)}">
+            <legend>Текущи снимки — отметнете за премахване</legend>
+            <div class="library-media-pick">
+                <label th:each="img : *{images}">
+                    <img th:src="@{/uploads/{f}(f=${img})}" alt="" />
+                    <span><input type="checkbox" name="removeImages" th:value="${img}" /> Премахни</span>
+                </label>
+            </div>
+        </fieldset>
+
+        <label for="imageFiles" th:text="${isEdit} ? 'Добави снимки' : 'Снимки'">Снимки</label>
+        <input id="imageFiles" type="file" name="imageFiles" accept="image/*" multiple="multiple" />
+        <span class="field-hint">Може да изберете няколко файла наведнъж.</span>
+
+        <fieldset class="library-media-field" th:if="${isEdit and not #lists.isEmpty(libraryResource.videos)}">
+            <legend>Текущи видеа — отметнете за премахване</legend>
+            <div class="library-media-pick">
+                <label th:each="vid : *{videos}">
+                    <video th:src="@{/uploads/{f}(f=${vid})}" preload="metadata" muted="muted"></video>
+                    <span><input type="checkbox" name="removeVideos" th:value="${vid}" /> Премахни</span>
+                </label>
+            </div>
+        </fieldset>
+
+        <label for="videoFiles" th:text="${isEdit} ? 'Добави видеа' : 'Видеа'">Видеа</label>
+        <input id="videoFiles" type="file" name="videoFiles" accept="video/*" multiple="multiple" />
+        <span class="field-hint">MP4 или WebM, до 200 MB на файл.</span>
+
+        <label for="sources">Източници</label>
+        <textarea id="sources" th:field="*{sources}"
+                  placeholder="По един източник на ред, напр.&#10;https://bg.wikipedia.org/wiki/...&#10;Иванов, И. „Заглавие на книга“, 2020"></textarea>
+        <span class="field-hint">По един на ред. Линковете стават кликаеми.</span>
+
+        <button type="submit" th:text="${isEdit} ? 'Запази промените' : 'Публикувай ресурс'">Публикувай ресурс</button>
+    </form>
+</main>
+
+<footer class="site-footer">HefestQueue — Платформа за училищни събития и уъркшопи.</footer>
+</body>
+</html>

@@ -9,7 +9,9 @@
     <nav class="main-nav">
         <a th:href="@{/events}">Събития</a>
         <a th:href="@{/events/new}">Създай събитие</a>
+        <a th:href="@{/library}">Библиотека</a>
         <a th:href="@{/reports}">Доклади</a>
+        <a th:if="${isAdmin}" th:href="@{/admin/managers}">Потребители</a>
         <span class="nav-divider"></span>
         <span class="user-name" th:if="${currentUser != null}" th:text="${currentUser.name}">Потребител</span>
         <a th:if="${currentUser == null}" th:href="@{/login}">Вход</a>

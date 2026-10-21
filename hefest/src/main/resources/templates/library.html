@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Библиотека | HefestQueue</title>
+    <link rel="stylesheet" th:href="@{/css/hefest.css}" />
+</head>
+<body>
+<header th:replace="~{fragments :: navigation}"></header>
+<main class="site-main">
+    <section class="page-heading">
+        <div>
+            <p class="eyebrow">БИБЛИОТЕКА</p>
+            <h1>Ресурси</h1>
+            <p class="lead">Статии, снимки и видеа, подбрани от екипа.</p>
+        </div>
+        <a class="button button-primary" th:if="${isAdmin}" th:href="@{/admin/library/new}">+ Нов ресурс</a>
+    </section>
+
+    <div class="library-grid" th:if="${not #lists.isEmpty(resources)}">
+        <a class="library-card" th:each="item : ${resources}" th:href="@{/library/{id}(id=${item.id})}">
+            <div class="library-cover" th:if="${not #lists.isEmpty(item.images)}">
+                <img th:src="@{/uploads/{f}(f=${item.images[0]})}" alt="" loading="lazy" />
+            </div>
+            <div class="library-card-body">
+                <h2 th:text="${item.title}">Заглавие</h2>
+                <p class="event-meta" th:text="${#temporals.format(item.createdAt, 'dd.MM.yyyy')}">01.01.2026</p>
+                <p class="library-excerpt" th:text="${item.description}">Описание</p>
+                <p class="library-counts">
+                    <span th:if="${not #lists.isEmpty(item.images)}" th:text="${#lists.size(item.images) + ' снимки'}">0 снимки</span>
+                    <span th:if="${not #lists.isEmpty(item.videos)}" th:text="${#lists.size(item.videos) + ' видеа'}">0 видеа</span>
+                </p>
+                <span class="event-link">Прочети <span aria-hidden="true">→</span></span>
+            </div>
+        </a>
+    </div>
+    <div class="empty" th:if="${#lists.isEmpty(resources)}">
+        <h2>Библиотеката е празна</h2>
+        <p th:if="${isAdmin}">Добавете първия ресурс.</p>
+        <p th:unless="${isAdmin}">Все още няма публикувани ресурси.</p>
+        <a class="button button-primary" th:if="${isAdmin}" th:href="@{/admin/library/new}">Нов ресурс</a>
+    </div>
+</main>
+<footer class="site-footer">HefestQueue — Платформа за училищни събития и уъркшопи.</footer>
+</body>
+</html>

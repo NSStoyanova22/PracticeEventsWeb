@@ -1,5 +1,6 @@
 package com.example.hefest.controller;
 
+import com.example.hefest.model.Role;
 import com.example.hefest.model.User;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
@@ -14,5 +15,8 @@ public class GlobalModelAttributes {
         if (currentUser != null) {
             model.addAttribute("currentUser", currentUser);
         }
+        model.addAttribute("isAdmin", currentUser != null && currentUser.getRole() == Role.ADMIN);
+        model.addAttribute("canEditLibrary", currentUser != null
+                && (currentUser.getRole() == Role.ADMIN));
     }
 }

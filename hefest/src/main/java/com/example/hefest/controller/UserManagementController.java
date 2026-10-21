@@ -19,7 +19,7 @@ public class UserManagementController {
         this.userService = userService;
     }
     private List<Role> availableRoles() {
-        return List.of(Role.ADMIN, Role.USER);
+        return List.of(Role.ADMIN , Role.USER);
     }
     @GetMapping
     public String listUsers(

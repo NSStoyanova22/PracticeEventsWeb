@@ -5,4 +5,3 @@ package com.example.hefest.model;
         USER,
         ADMIN
     }
-

@@ -31,18 +31,11 @@ public class PdfReportService {
 
         try {
             PdfWriter.getInstance(document, outputStream);
-
             document.open();
-
-            
             document.add(new Paragraph(title));
-
-            
             document.add(new Paragraph(
                     "Period: " + from + " - " + to
             ));
-
-            
             document.add(new Paragraph(
                     "Number of events: " + reports.size()
             ));
@@ -50,9 +43,7 @@ public class PdfReportService {
                     "Total revenue: " + reports.stream().map(EventReport::revenue)
                             .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add) + " BGN"
             ));
-
             PdfPTable table = new PdfPTable(7);
-
             table.addCell("Event");
             table.addCell("Date");
             table.addCell("Time");
@@ -61,9 +52,7 @@ public class PdfReportService {
             table.addCell("Capacity");
             table.addCell("Available spots");
             table.addCell("Revenue");
-
             for (EventReport report : reports) {
-
                 table.addCell(report.title());
                 table.addCell(report.eventDate().toString());
                 table.addCell(report.eventTime() == null ? "-" : report.eventTime().toString());
@@ -79,13 +68,9 @@ public class PdfReportService {
                 );
                 table.addCell(report.revenue() + " BGN");
             }
-
             document.add(table);
-
             document.close();
-
             return outputStream.toByteArray();
-
         } catch (DocumentException e) {
             throw new RuntimeException(
                     "Could not generate PDF report", e

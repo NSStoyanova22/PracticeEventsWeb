@@ -112,6 +112,7 @@ public class UserService {
         user.setRole(role);
         userRepository.save(user);
     }
+
     public User findById(Long id) {
     return userRepository.findById(id)
             .orElseThrow(() ->
