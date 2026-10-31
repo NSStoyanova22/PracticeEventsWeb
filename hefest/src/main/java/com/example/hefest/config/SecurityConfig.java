@@ -1,6 +1,10 @@
 package com.example.hefest.config;
 
+import com.example.hefest.model.SessionEndReason;
+import com.example.hefest.model.User;
 import com.example.hefest.repository.UserRepository;
+import com.example.hefest.service.SessionTrackingService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -10,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
 import java.util.Locale;
 
@@ -28,11 +33,16 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                            SessionTrackingService sessionTrackingService) throws Exception {
+        SimpleUrlAuthenticationSuccessHandler redirectToEvents = new SimpleUrlAuthenticationSuccessHandler("/events");
+        redirectToEvents.setAlwaysUseDefaultTargetUrl(true);
+
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/login", "/register").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/chat/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/events/*/registrations/**").authenticated()
                         .requestMatchers("/events/**").permitAll()
                         .anyRequest().permitAll()
@@ -40,11 +50,22 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .usernameParameter("email")
-                        .defaultSuccessUrl("/events", true)
+                        .successHandler((request, response, authentication) -> {
+                            if (authentication.getPrincipal() instanceof User user) {
+                                sessionTrackingService.recordLogin(user, request);
+                            }
+                            redirectToEvents.onAuthenticationSuccess(request, response, authentication);
+                        })
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
+                        .addLogoutHandler((request, response, authentication) -> {
+                            HttpSession session = request.getSession(false);
+                            if (session != null) {
+                                sessionTrackingService.endSession(session.getId(), SessionEndReason.LOGOUT);
+                            }
+                        })
                         .logoutSuccessUrl("/events")
                         .permitAll()
                 );

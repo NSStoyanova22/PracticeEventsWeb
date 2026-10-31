@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Чат | HefestQueue</title>
+    <link rel="stylesheet" th:href="@{/css/hefest.css}" />
+</head>
+<body>
+<header th:replace="~{fragments :: navigation}"></header>
+<main class="site-main admin-chat-page">
+    <section class="page-heading">
+        <div>
+            <p class="eyebrow">АДМИНИСТРАЦИЯ</p>
+            <h1>Чат с потребители</h1>
+            <p class="lead">Новите въпроси се появяват автоматично. Отговорът ви стига до потребителя веднага.</p>
+        </div>
+    </section>
+
+    <div class="admin-chat" id="admin-chat"
+         th:attr="data-base=@{/},
+                  data-csrf-header=${_csrf.headerName},
+                  data-csrf-token=${_csrf.token}">
+        <aside class="admin-chat-list" aria-label="Разговори">
+            <p class="admin-chat-empty">Все още няма въпроси.</p>
+        </aside>
+        <section class="admin-chat-thread" aria-label="Разговор">
+            <header class="admin-chat-thread-head">
+                <strong class="admin-chat-user">Изберете разговор</strong>
+                <span class="admin-chat-email"></span>
+            </header>
+            <div class="chat-messages admin-chat-messages" aria-live="polite"></div>
+            <form class="chat-form admin-chat-form" hidden>
+                <textarea name="content" rows="3" maxlength="2000" placeholder="Напишете отговор… (Enter за изпращане, Shift+Enter за нов ред)" required></textarea>
+                <button type="submit">Отговори</button>
+            </form>
+        </section>
+    </div>
+</main>
+<footer class="site-footer">HefestQueue — Платформа за училищни събития и уъркшопи.</footer>
+<script th:src="@{/js/admin-chat.js}" defer></script>
+</body>
+</html>

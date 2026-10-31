@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Одит | HefestQueue</title>
+    <link rel="stylesheet" th:href="@{/css/hefest.css}" />
+</head>
+<body>
+<header th:replace="~{fragments :: navigation}"></header>
+<main class="site-main reports-page">
+    <section class="page-heading">
+        <div>
+            <p class="eyebrow">АДМИНИСТРАЦИЯ</p>
+            <h1>Одит на данните</h1>
+            <p class="lead">Невалидни записи от всички таблици и история на приключилите сесии.</p>
+        </div>
+    </section>
+
+    <div class="report-summary">
+        <div class="report-stat" th:classappend="${invalidTotal == 0} ? ' report-stat-wide' : ' audit-stat-bad'">
+            <span class="report-stat-label">Невалидни записи</span>
+            <strong th:text="${invalidTotal}">0</strong>
+            <span class="report-stat-note" th:text="${'от ' + checkedTotal + ' проверени'}">от 0 проверени</span>
+        </div>
+        <div class="report-stat">
+            <span class="report-stat-label">Изминали сесии</span>
+            <strong th:text="${pastSessionCount}">0</strong>
+            <span class="report-stat-note">приключили входове</span>
+        </div>
+        <div class="report-stat">
+            <span class="report-stat-label">Активни сега</span>
+            <strong th:text="${activeSessionCount}">0</strong>
+            <span class="report-stat-note">отворени сесии</span>
+        </div>
+    </div>
+
+    <!-- Invalid records -->
+    <div class="report-list-heading">
+        <h2>Невалидни записи</h2>
+        <span class="report-period">Проверката се прави при всяко зареждане</span>
+    </div>
+
+    <div class="audit-tables">
+        <span class="audit-chip" th:each="check : ${checks}"
+              th:classappend="${#lists.isEmpty(check.invalid)} ? ' is-ok' : ' is-bad'"
+              th:text="${check.title + ': ' + #lists.size(check.invalid) + ' / ' + check.checked}">Таблица: 0 / 0</span>
+    </div>
+
+    <div class="report-table-wrap" th:if="${invalidTotal > 0}">
+        <table class="report-table">
+            <thead>
+            <tr>
+                <th>Таблица</th>
+                <th>ID</th>
+                <th>Запис</th>
+                <th>Проблеми</th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="check : ${checks}">
+                <tr th:each="record : ${check.invalid}">
+                    <td><code th:text="${record.table}">users</code></td>
+                    <td th:text="${record.recordId}">1</td>
+                    <td th:text="${record.label}">Запис</td>
+                    <td>
+                        <ul class="audit-problems">
+                            <li th:each="problem : ${record.problems}" th:text="${problem}">Проблем</li>
+                        </ul>
+                    </td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+    </div>
+    <div class="empty report-empty" th:if="${invalidTotal == 0}">
+        <h2>Всички записи са валидни</h2>
+        <p>Не са открити проблеми в нито една таблица.</p>
+    </div>
+
+    <!-- Past sessions -->
+    <div class="report-list-heading">
+        <h2>Изминали сесии</h2>
+        <span class="report-period" th:if="${sessions.totalElements > 0}"
+              th:text="${'Страница ' + (sessions.number + 1) + ' от ' + sessions.totalPages}">Страница 1 от 1</span>
+    </div>
+
+    <div class="report-table-wrap" th:if="${not sessions.isEmpty()}">
+        <table class="report-table">
+            <thead>
+            <tr>
+                <th>Потребител</th>
+                <th>Вход</th>
+                <th>Изход</th>
+                <th>Продължителност</th>
+                <th>Край</th>
+                <th>IP</th>
+                <th>Браузър</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="s : ${sessions.content}">
+                <td>
+                    <strong th:text="${s.userName}">Име</strong><br />
+                    <span class="event-meta" th:text="${s.userEmail}">email</span>
+                </td>
+                <td th:text="${s.loginAt}">01.01.2026 10:00</td>
+                <td th:text="${s.logoutAt}">01.01.2026 11:00</td>
+                <td th:text="${s.duration}">1 ч</td>
+                <td><span class="role-badge" th:text="${s.endReason}">Изход</span></td>
+                <td><code th:text="${s.ipAddress}">127.0.0.1</code></td>
+                <td th:text="${s.browser}" th:title="${s.userAgent}">Chrome</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="empty report-empty" th:if="${sessions.isEmpty()}">
+        <h2>Няма приключили сесии</h2>
+        <p>Сесиите се появяват тук след изход, изтичане или рестарт на сървъра.</p>
+    </div>
+
+    <nav class="pagination" th:if="${sessions.totalPages > 1}" aria-label="Странициране">
+        <a class="button" th:if="${not sessions.first}"
+           th:href="@{/admin/audit(page=${sessions.number - 1},size=${size})}">← Предишна</a>
+        <span>Страница <strong th:text="${sessions.number + 1}">1</strong> от <strong th:text="${sessions.totalPages}">1</strong></span>
+        <a class="button" th:if="${not sessions.last}"
+           th:href="@{/admin/audit(page=${sessions.number + 1},size=${size})}">Следваща →</a>
+    </nav>
+</main>
+<footer class="site-footer">HefestQueue — Платформа за училищни събития и уъркшопи.</footer>
+</body>
+</html>

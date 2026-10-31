@@ -12,6 +12,8 @@
         <a th:href="@{/library}">Библиотека</a>
         <a th:href="@{/reports}">Доклади</a>
         <a th:if="${isAdmin}" th:href="@{/admin/managers}">Потребители</a>
+        <a th:if="${isAdmin}" th:href="@{/admin/audit}">Одит</a>
+        <a th:if="${isAdmin}" th:href="@{/admin/chat}">Чат <span class="chat-nav-badge" data-chat-badge hidden>0</span></a>
         <span class="nav-divider"></span>
         <span class="user-name" th:if="${currentUser != null}" th:text="${currentUser.name}">Потребител</span>
         <a th:if="${currentUser == null}" th:href="@{/login}">Вход</a>
@@ -21,6 +23,40 @@
             <button class="link-button" type="submit">Изход</button>
         </form>
     </nav>
+
+    <!-- Live chat with an admin. Admins answer from /admin/chat; chat.js only updates their nav badge. -->
+    <div class="chat-widget" id="chat-widget"
+         th:attr="data-mode=${isAdmin ? 'admin' : (currentUser != null ? 'user' : 'anon')},
+                  data-base=@{/},
+                  data-csrf-header=${_csrf.headerName},
+                  data-csrf-token=${_csrf.token}">
+        <th:block th:unless="${isAdmin}">
+            <button class="chat-toggle" type="button" aria-controls="chat-panel" aria-expanded="false">
+                <span aria-hidden="true">💬</span> Попитай
+                <span class="chat-unread-dot" hidden></span>
+            </button>
+            <section class="chat-panel" id="chat-panel" hidden aria-label="Чат с администратор">
+                <header class="chat-panel-head">
+                    <div>
+                        <strong>Помощ от екипа</strong>
+                        <span>Администратор ще ви отговори тук.</span>
+                    </div>
+                    <button class="chat-close" type="button" aria-label="Затвори">×</button>
+                </header>
+                <div class="chat-messages" aria-live="polite">
+                    <p class="chat-hint">Здравейте! Задайте въпрос за събитията и проектите — отговаря реален човек от екипа.</p>
+                </div>
+                <form class="chat-form" th:if="${currentUser != null}">
+                    <textarea name="content" rows="2" maxlength="2000" placeholder="Напишете въпрос…" required></textarea>
+                    <button type="submit">Изпрати</button>
+                </form>
+                <p class="chat-login" th:if="${currentUser == null}">
+                    <a th:href="@{/login}">Влезте</a>, за да зададете въпрос.
+                </p>
+            </section>
+        </th:block>
+    </div>
+    <script th:src="@{/js/chat.js}" defer></script>
 </header>
 </body>
 </html>
