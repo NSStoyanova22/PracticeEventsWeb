@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Нямате достъп | HefestQueue</title>
+    <link rel="stylesheet" th:href="@{/css/hefest.css}" />
+</head>
+<body>
+<header th:replace="~{fragments :: navigation}"></header>
+<main class="site-main empty">
+    <h1>Нямате достъп до тази страница</h1>
+    <p>Вашата роля не позволява извършването на тази операция.</p>
+    <a class="button button-primary" th:href="@{/events}">Към събитията</a>
+</main>
+</body>
+</html>

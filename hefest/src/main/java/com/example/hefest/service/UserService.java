@@ -69,7 +69,7 @@ public class UserService {
         if (userRepository.existsByEmailIgnoreCase(email)) {
             throw new IllegalStateException("Email is already registered");
         }
-        if(form.getRole() == null || form.getRole() == Role.USER) {
+        if (form.getRole() == null) {
             throw new IllegalStateException("The selected role is not allowed");
         }
         User user = new User();
@@ -104,7 +104,7 @@ public class UserService {
         userRepository.save(user);
     }
     public void changeRole(Long id, Role role) {
-       if(role == null || role == Role.USER) {
+       if (role == null) {
             throw new IllegalStateException("The selected role is not allowed");
         }
         User user = userRepository.findById(id)

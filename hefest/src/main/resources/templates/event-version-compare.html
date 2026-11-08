@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Сравнение на версии | HefestQueue</title><link rel="stylesheet" th:href="@{/css/hefest.css}" /></head>
+<body><header th:replace="~{fragments :: navigation}"></header>
+<main class="site-main reports-page"><a class="back-link" th:href="@{/events/{id}(id=${event.id})}">← Назад към събитието</a><h1>Сравнение на версии</h1>
+    <form class="report-filter" method="get" th:action="@{/events/{id}/versions/compare(id=${event.id})}">
+        <label>По-стара версия <select name="left" required><option th:each="version : ${versions}" th:value="${version.id}" th:text="${'Версия ' + version.versionNumber}" th:selected="${leftVersion != null and leftVersion.id == version.id}">Версия</option></select></label>
+        <label>По-нова версия <select name="right" required><option th:each="version : ${versions}" th:value="${version.id}" th:text="${'Версия ' + version.versionNumber}" th:selected="${rightVersion != null and rightVersion.id == version.id}">Версия</option></select></label>
+        <button class="button button-primary" type="submit">Сравни</button>
+    </form>
+    <div class="report-table-wrap" th:if="${leftVersion != null and rightVersion != null}"><table class="report-table"><thead><tr><th>Поле</th><th th:text="${'Версия ' + leftVersion.versionNumber}">Стара</th><th th:text="${'Версия ' + rightVersion.versionNumber}">Нова</th></tr></thead><tbody>
+        <tr><th>Заглавие</th><td th:text="${leftVersion.title}">-</td><td th:text="${rightVersion.title}">-</td></tr>
+        <tr><th>Описание</th><td th:text="${leftVersion.description}">-</td><td th:text="${rightVersion.description}">-</td></tr>
+        <tr><th>Дата</th><td th:text="${leftVersion.date}">-</td><td th:text="${rightVersion.date}">-</td></tr>
+        <tr><th>Час</th><td th:text="${leftVersion.time}">-</td><td th:text="${rightVersion.time}">-</td></tr>
+        <tr><th>Цена</th><td th:text="${leftVersion.price}">-</td><td th:text="${rightVersion.price}">-</td></tr>
+        <tr><th>Капацитет</th><td th:text="${leftVersion.capacity}">-</td><td th:text="${rightVersion.capacity}">-</td></tr>
+        <tr><th>Статус</th><td th:text="${leftVersion.status}">-</td><td th:text="${rightVersion.status}">-</td></tr>
+    </tbody></table></div>
+</main></body></html>

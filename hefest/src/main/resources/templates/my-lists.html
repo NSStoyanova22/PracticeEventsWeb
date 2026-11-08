@@ -1,0 +1,6 @@
+<!DOCTYPE html><html lang="bg" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8" /><title>Любими и колекции | HefestQueue</title><link rel="stylesheet" th:href="@{/css/hefest.css}" /></head>
+<body><header th:replace="~{fragments :: navigation}"></header><main class="site-main reports-page"><h1>Любими и колекции</h1><p class="message error" th:if="${listError}" th:text="${listError}"></p>
+<form class="report-filter" method="post" th:action="@{/collections}"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /><input name="name" placeholder="Нова колекция" required maxlength="100" /><button class="button button-primary" type="submit">Създай колекция</button></form>
+<h2>Любими събития</h2><ul><li th:each="favorite : ${favorites}"><a th:href="@{/events/{id}(id=${favorite.event.id})}" th:text="${favorite.event.title}">Събитие</a></li></ul><p th:if="${#lists.isEmpty(favorites)}">Нямате добавени любими събития.</p>
+<h2>Моите колекции</h2><ul><li th:each="collection : ${collections}"><a th:href="@{/collections/{id}(id=${collection.id})}" th:text="${collection.name}">Колекция</a></li></ul><p th:if="${#lists.isEmpty(collections)}">Все още няма колекции.</p>
+</main></body></html>

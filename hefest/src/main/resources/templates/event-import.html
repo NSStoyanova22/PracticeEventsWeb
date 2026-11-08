@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Импорт на събития | HefestQueue</title><link rel="stylesheet" th:href="@{/css/hefest.css}" /></head>
+<body><header th:replace="~{fragments :: navigation}"></header>
+<main class="site-main reports-page"><a class="back-link" th:href="@{/events}">← Назад</a><h1>Импорт на събития</h1>
+    <p>CSV/XLSX колони: title, description, date (yyyy-MM-dd), time (HH:mm), price, capacity.</p>
+    <form class="event-form" method="post" enctype="multipart/form-data" th:action="@{/events/import/preview}">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /><input type="file" name="file" accept=".csv,.xlsx" required /><button type="submit">Прегледай</button>
+    </form>
+    <p class="message error" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+    <section th:if="${preview != null}"><h2>Преглед на редовете</h2><p th:text="${preview.valid ? 'Всички редове са валидни.' : 'Има грешки — записването е блокирано.'}"></p>
+        <div class="report-table-wrap"><table class="report-table"><thead><tr><th>Ред</th><th>Заглавие</th><th>Дата</th><th>Цена</th><th>Капацитет</th><th>Резултат</th></tr></thead><tbody>
+            <tr th:each="row : ${preview.rows}"><td th:text="${row.rowNumber}">1</td><td th:text="${row.title}">Събитие</td><td th:text="${row.date}">2026-01-01</td><td th:text="${row.price}">0</td><td th:text="${row.capacity}">10</td><td><span th:if="${row.valid}" style="color:green">Валиден</span><ul th:unless="${row.valid}"><li th:each="error : ${row.errors}" th:text="${error}">Грешка</li></ul></td></tr>
+        </tbody></table></div>
+        <form method="post" th:if="${preview.valid}" th:action="@{/events/import/commit}"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /><button class="button button-primary" type="submit">Запиши всички редове</button></form>
+    </section>
+</main></body></html>

@@ -21,8 +21,54 @@
             <span class="event-status" th:if="${availablePlaces > 0}">ОТВОРЕНО</span>
             <span class="event-status event-status-full" th:if="${availablePlaces == 0}">ПЪЛНО</span>
         </div>
+        <div th:if="${canManageEvents}">
+            <a class="button" th:href="@{/events/{id}/edit(id=${event.id})}">Редактирай</a>
+            <form class="inline-form" th:action="@{/events/{id}/delete(id=${event.id})}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button type="submit">Изтрий</button>
+            </form>
+        </div>
         <p class="event-meta" th:text="${event.date + (event.time != null ? ' · ' + event.time : '') + ' · ' + (event.price != null ? #numbers.formatDecimal(event.price, 1, 2) : '0.00') + ' лв. на регистрация'}">Дата · Цена</p>
         <p class="event-description detail-description" th:text="${event.description}">Описание на събитието</p>
+        <p class="event-meta">Статус: <strong th:text="${event.status}">DRAFT</strong></p>
+        <div th:if="${currentUser != null}">
+            <form class="inline-form" method="post" th:action="@{/favorites/{id}(id=${event.id})}"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /><button type="submit" th:text="${isFavorite} ? '★ Премахни от любими' : '☆ Добави в любими'">Добави в любими</button></form>
+            <span th:if="${not #lists.isEmpty(collections)}">Добави в: </span><form th:each="collection : ${collections}" class="inline-form" method="post" th:action="@{/collections/{id}/events/{eventId}(id=${collection.id},eventId=${event.id})}"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /><button type="submit" th:text="${collection.name}">Колекция</button></form>
+        </div>
+        <div th:if="${canManageEvents}" class="registration-form">
+            <form th:if="${currentUser.role.name() == 'EDITOR' and event.status.name() == 'DRAFT'}" method="post" th:action="@{/events/{id}/status(id=${event.id})}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /><input type="hidden" name="status" value="REVIEW" /><button type="submit">Изпрати за преглед</button>
+            </form>
+            <form th:if="${currentUser.role.name() == 'ADMIN' and event.status.name() == 'REVIEW'}" method="post" th:action="@{/events/{id}/status(id=${event.id})}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /><input type="hidden" name="status" value="APPROVED" /><button type="submit">Одобри</button>
+            </form>
+            <form th:if="${currentUser.role.name() == 'ADMIN' and event.status.name() == 'REVIEW'}" method="post" th:action="@{/events/{id}/status(id=${event.id})}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /><input type="hidden" name="status" value="REJECTED" /><button type="submit">Откажи</button>
+            </form>
+            <form th:if="${currentUser.role.name() == 'ADMIN' and event.status.name() == 'REJECTED'}" method="post" th:action="@{/events/{id}/status(id=${event.id})}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /><input type="hidden" name="status" value="DRAFT" /><button type="submit">Върни в чернова</button>
+            </form>
+        </div>
+
+        <section class="library-section" th:if="${canManageEvents and not #lists.isEmpty(versions)}">
+            <h2>Версии</h2><a class="button" th:if="${#lists.size(versions) > 1}" th:href="@{/events/{id}/versions/compare(id=${event.id})}">Сравни версии</a><table class="report-table"><thead><tr><th>Версия</th><th>Дата</th><th>Променил</th><th>Действие</th></tr></thead><tbody>
+            <tr th:each="version : ${versions}"><td th:text="${version.versionNumber}">1</td><td th:text="${#temporals.format(version.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2026</td><td th:text="${version.changedBy}">user</td><td><form method="post" th:action="@{/events/{id}/versions/{versionId}/restore(id=${event.id},versionId=${version.id})}"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /><button type="submit">Възстанови</button></form></td></tr>
+            </tbody></table>
+        </section>
+        <section class="library-section" th:if="${not #lists.isEmpty(workflowHistory)}"><h2>История на статусите</h2><ul><li th:each="entry : ${workflowHistory}" th:text="${entry.fromStatus + ' → ' + entry.toStatus + ' (' + entry.changedBy + ')'}">DRAFT → REVIEW</li></ul></section>
+        <section class="library-section">
+            <h2>Коментари и дискусия</h2>
+            <p class="message error" th:if="${commentError}" th:text="${commentError}"></p>
+            <form th:if="${currentUser != null}" method="post" th:action="@{/events/{id}/comments(id=${event.id})}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /><textarea name="content" maxlength="2000" required placeholder="Добавете коментар…"></textarea><button type="submit">Публикувай</button>
+            </form>
+            <div th:each="comment : ${comments}" class="comment-item" th:style="${comment.parentId != null ? 'margin-left: 2rem' : ''}">
+                <strong th:text="${comment.author.name}">Автор</strong><small th:text="${#temporals.format(comment.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2026</small><p th:text="${comment.content}">Коментар</p>
+                <form th:if="${currentUser != null and (currentUser.id == comment.author.id or isAdmin)}" method="post" th:action="@{/comments/{id}/edit(id=${comment.id})}"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /><input name="content" th:value="${comment.content}" maxlength="2000" required /><button type="submit">Редактирай</button></form>
+                <form th:if="${currentUser != null and (currentUser.id == comment.author.id or isAdmin)}" method="post" th:action="@{/comments/{id}/delete(id=${comment.id})}"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /><button type="submit">Изтрий</button></form>
+                <form th:if="${currentUser != null}" method="post" th:action="@{/events/{id}/comments(id=${event.id})}"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /><input type="hidden" name="parentId" th:value="${comment.id}" /><input name="content" placeholder="Отговор…" maxlength="2000" required /><button type="submit">Отговори</button></form>
+            </div>
+        </section>
         <div class="detail-capacity">
             <div class="capacity-labels">
                 <span><strong th:text="${registeredCount}">0</strong> / <span th:text="${event.capacity}">0</span> регистрирани</span>

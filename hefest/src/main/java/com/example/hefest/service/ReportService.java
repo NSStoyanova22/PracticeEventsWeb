@@ -57,7 +57,7 @@ public class ReportService {
         LocalDate filterTo = weekTo == null ? to : to.isBefore(weekTo) ? to : weekTo;
 
         Comparator<Event> comparator = eventComparator(sort, direction);
-        return eventRepository.findByDateBetween(filterFrom, filterTo).stream()
+        return eventRepository.findByDeletedAtIsNullAndDateBetween(filterFrom, filterTo).stream()
                 .sorted(comparator)
                 .map(this::createEventReport)
                 .toList();

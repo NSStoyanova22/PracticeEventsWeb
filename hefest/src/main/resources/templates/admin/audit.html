@@ -78,6 +78,43 @@
         <p>Не са открити проблеми в нито една таблица.</p>
     </div>
 
+    <!-- Change history -->
+    <div class="report-list-heading">
+        <h2>История на промените</h2>
+        <span class="report-period" th:if="${auditLogs.totalElements > 0}"
+              th:text="${auditLogs.totalElements + ' записа'}">0 записа</span>
+    </div>
+    <form class="report-filter" method="get" th:action="@{/admin/audit}">
+        <input type="text" name="actor" placeholder="Имейл на извършителя" th:value="${actor}" />
+        <select name="entityType">
+            <option value="">Всички типове</option>
+            <option value="Event" th:selected="${entityType == 'Event'}">Събития</option>
+        </select>
+        <input type="date" name="from" th:value="${from}" aria-label="От дата" />
+        <input type="date" name="to" th:value="${to}" aria-label="До дата" />
+        <input type="hidden" name="size" th:value="${size}" />
+        <button class="button button-primary" type="submit">Филтрирай</button>
+    </form>
+    <div class="report-table-wrap" th:if="${not auditLogs.isEmpty()}">
+        <table class="report-table">
+            <thead><tr><th>Дата</th><th>Потребител</th><th>Операция</th><th>Обект</th><th>Стара стойност</th><th>Нова стойност</th></tr></thead>
+            <tbody>
+            <tr th:each="log : ${auditLogs.content}">
+                <td th:text="${#temporals.format(log.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2026 10:00</td>
+                <td th:text="${log.actor != null ? log.actor.email : 'Система'}">admin@example.com</td>
+                <td th:text="${log.action}">UPDATE</td>
+                <td th:text="${log.entityType + ' #' + log.entityId}">Event #1</td>
+                <td><small th:text="${log.oldValues != null ? log.oldValues : '—'}">—</small></td>
+                <td><small th:text="${log.newValues != null ? log.newValues : '—'}">—</small></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="empty report-empty" th:if="${auditLogs.isEmpty()}">
+        <h2>Няма записи в историята</h2>
+        <p>Промените по събитията ще се появят тук.</p>
+    </div>
+
     <!-- Past sessions -->
     <div class="report-list-heading">
         <h2>Изминали сесии</h2>

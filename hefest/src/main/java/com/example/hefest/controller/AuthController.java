@@ -31,6 +31,11 @@ public class AuthController {
         return "login";
     }
 
+    @GetMapping("/403")
+    public String forbidden() {
+        return "403";
+    }
+
     @GetMapping("/register")
     public String registrationForm(Model model) {
         model.addAttribute("registrationForm", new RegistrationForm());

@@ -1,0 +1,8 @@
+<!DOCTYPE html><html lang="bg" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8" /><title>Настройки | HefestQueue</title><link rel="stylesheet" th:href="@{/css/hefest.css}" /></head>
+<body><header th:replace="~{fragments :: navigation}"></header><main class="site-main form-page"><h1>Потребителски настройки</h1><p class="message" th:if="${successMessage}" th:text="${successMessage}"></p>
+<form class="event-form" method="post" th:action="@{/settings}"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+<label>Език<select name="language"><option value="bg" th:selected="${preferences.language == 'bg'}">Български</option><option value="en" th:selected="${preferences.language == 'en'}">English</option></select></label>
+<label>Тема<select name="theme"><option value="light" th:selected="${preferences.theme == 'light'}">Светла</option><option value="dark" th:selected="${preferences.theme == 'dark'}">Тъмна</option></select></label>
+<label>Елементи на страница<input type="number" name="pageSize" min="3" max="50" th:value="${preferences.pageSize}" /></label>
+<label><input type="checkbox" name="emailNotifications" value="true" th:checked="${preferences.emailNotifications}" /> Предпочитам известия</label>
+<button type="submit">Запази настройките</button></form></main></body></html>

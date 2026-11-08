@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.hefest.service.ReportService;
 import com.example.hefest.service.PdfReportService;
+import com.example.hefest.service.ExportService;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,10 +21,12 @@ public class ReportController {
 
     private final ReportService reportService;
     private final PdfReportService pdfReportService;
+    private final ExportService exportService;
 
-    public ReportController(ReportService reportService, PdfReportService pdfReportService) {
+    public ReportController(ReportService reportService, PdfReportService pdfReportService, ExportService exportService) {
         this.reportService = reportService;
         this.pdfReportService = pdfReportService;
+        this.exportService = exportService;
     }
     
 
@@ -95,5 +98,32 @@ public class ReportController {
 
 
         
+    }
+
+    @GetMapping("/reports/csv")
+    public ResponseEntity<byte[]> csvReports(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+                                             @RequestParam(required = false) String week,
+                                             @RequestParam(defaultValue = "date") String sort,
+                                             @RequestParam(defaultValue = "asc") String direction) {
+        byte[] body = exportService.csv(reportService.generateReport(from, to, week, sort, direction));
+        return download(body, "event-report.csv", "text/csv; charset=UTF-8");
+    }
+
+    @GetMapping("/reports/xlsx")
+    public ResponseEntity<byte[]> xlsxReports(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+                                              @RequestParam(required = false) String week,
+                                              @RequestParam(defaultValue = "date") String sort,
+                                              @RequestParam(defaultValue = "asc") String direction) {
+        byte[] body = exportService.xlsx(reportService.generateReport(from, to, week, sort, direction));
+        return download(body, "event-report.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    }
+
+    private ResponseEntity<byte[]> download(byte[] body, String filename, String contentType) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_TYPE, contentType);
+        headers.setContentDisposition(ContentDisposition.attachment().filename(filename).build());
+        return ResponseEntity.ok().headers(headers).body(body);
     }
 }

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Известия | HefestQueue</title><link rel="stylesheet" th:href="@{/css/hefest.css}" /></head>
+<body>
+<header th:replace="~{fragments :: navigation}"></header>
+<main class="site-main reports-page">
+    <section class="page-heading"><div><p class="eyebrow">HEFESTQUEUE</p><h1>Известия</h1><p class="lead">Вашите последни известия от приложението.</p></div>
+        <form method="post" th:action="@{/notifications/read-all}" th:if="${not #lists.isEmpty(notifications)}"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /><button class="button" type="submit">Маркирай всички като прочетени</button></form>
+    </section>
+    <div class="empty report-empty" th:if="${#lists.isEmpty(notifications)}"><h2>Няма известия</h2><p>Тук ще се появят важните съобщения.</p></div>
+    <div class="report-table-wrap" th:unless="${#lists.isEmpty(notifications)}"><table class="report-table"><tbody>
+        <tr th:each="notification : ${notifications}" th:classappend="${!notification.read} ? ' notification-unread' : ''">
+            <td><strong th:text="${notification.title}">Ново известие</strong><br /><span th:text="${notification.message}">Съобщение</span><br /><small th:text="${#temporals.format(notification.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2026</small></td>
+            <td><form th:if="${!notification.read}" method="post" th:action="@{/notifications/{id}/read(id=${notification.id})}"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /><button class="button" type="submit">Прочетено</button></form><span th:if="${notification.read}">Прочетено</span></td>
+        </tr>
+    </tbody></table></div>
+</main>
+</body>
+</html>

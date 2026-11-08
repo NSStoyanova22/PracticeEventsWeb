@@ -14,7 +14,10 @@
         <div>
             <p class="eyebrow">HEFESTQUEUE</p>
             <div class="page-header-content">
-            <h1>Отчети</h1> <button class="button button-primary" type="submit" form="reportFilterForm" id="reportFilter" th:formaction="@{/reports/pdf}" formmethod="get">Генерирай PDF</button>
+            <h1>Отчети</h1>
+            <button class="button button-primary" type="submit" form="reportFilterForm" id="reportFilter" th:formaction="@{/reports/pdf}" formmethod="get">Генерирай PDF</button>
+            <button class="button" type="submit" form="reportFilterForm" th:formaction="@{/reports/csv}" formmethod="get">CSV</button>
+            <button class="button" type="submit" form="reportFilterForm" th:formaction="@{/reports/xlsx}" formmethod="get">Excel</button>
             </div>
             <p class="lead">Проследи активността на събитията и регистрациите за избран период.</p>
         </div>

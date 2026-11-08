@@ -15,8 +15,29 @@
             <h1>Предстоящи събития</h1>
             <p class="lead">Открийте следващото събитие и запазете своето място.</p>
         </div>
-        <a class="button button-primary" th:href="@{/events/new}">+ Създай събитие</a>
+        <a class="button button-primary" th:if="${canManageEvents}" th:href="@{/events/new}">+ Създай събитие</a>
     </section>
+
+    <form class="report-filter" method="get" th:action="@{/events}">
+        <input type="search" name="title" placeholder="Заглавие" th:value="${title}" />
+        <input type="date" name="fromDate" th:value="${fromDate}" aria-label="От дата" />
+        <input type="date" name="toDate" th:value="${toDate}" aria-label="До дата" />
+        <input type="number" name="minPrice" min="0" step="0.01" placeholder="Мин. цена" th:value="${minPrice}" />
+        <input type="number" name="maxPrice" min="0" step="0.01" placeholder="Макс. цена" th:value="${maxPrice}" />
+        <input type="number" name="minCapacity" min="1" placeholder="Мин. капацитет" th:value="${minCapacity}" />
+        <select name="sort">
+            <option value="date" th:selected="${sort == 'date'}">Дата</option>
+            <option value="title" th:selected="${sort == 'title'}">Заглавие</option>
+            <option value="price" th:selected="${sort == 'price'}">Цена</option>
+            <option value="capacity" th:selected="${sort == 'capacity'}">Капацитет</option>
+        </select>
+        <select name="direction">
+            <option value="asc" th:selected="${direction == 'asc'}">Възходящо</option>
+            <option value="desc" th:selected="${direction == 'desc'}">Низходящо</option>
+        </select>
+        <button class="button button-primary" type="submit">Търси</button>
+        <a class="button" th:href="@{/events}">Изчисти</a>
+    </form>
 
     <div class="event-grid" th:if="${not #lists.isEmpty(events)}">
         <a class="event-card" th:each="event : ${events}"
@@ -45,8 +66,15 @@
     <div class="empty" th:if="${#lists.isEmpty(events)}">
         <h2>Все още няма събития</h2>
         <p>Създайте първото събитие, за да започнете.</p>
-        <a class="button button-primary" th:href="@{/events/new}">Създай събитие</a>
+        <a class="button button-primary" th:if="${canManageEvents}" th:href="@{/events/new}">Създай събитие</a>
     </div>
+    <nav class="pagination" th:if="${eventPage.totalPages > 1}" aria-label="Странициране">
+        <a class="button" th:if="${not eventPage.first}"
+           th:href="@{/events(title=${title},fromDate=${fromDate},toDate=${toDate},minPrice=${minPrice},maxPrice=${maxPrice},minCapacity=${minCapacity},sort=${sort},direction=${direction},page=${eventPage.number - 1},size=${size})}">← Предишна</a>
+        <span>Страница <strong th:text="${eventPage.number + 1}">1</strong> от <strong th:text="${eventPage.totalPages}">1</strong></span>
+        <a class="button" th:if="${not eventPage.last}"
+           th:href="@{/events(title=${title},fromDate=${fromDate},toDate=${toDate},minPrice=${minPrice},maxPrice=${maxPrice},minCapacity=${minCapacity},sort=${sort},direction=${direction},page=${eventPage.number + 1},size=${size})}">Следваща →</a>
+    </nav>
 </main>
 <footer class="site-footer">HefestQueue — Платформа за училищни събития и уъркшопи.</footer>
 </body>

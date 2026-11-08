@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
+import com.example.hefest.model.User;
 
 public interface RegistrationRepository
         extends JpaRepository<Registration, Long> {
@@ -19,5 +20,6 @@ public interface RegistrationRepository
     List<Object[]> countPerEvent();
 
     Optional<Registration> findByEventIdAndUserId(Long eventId, Long userId);
+    List<Registration> findByEventId(Long eventId);
 
 }

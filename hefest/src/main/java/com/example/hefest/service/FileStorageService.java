@@ -16,6 +16,8 @@ import java.util.UUID;
 @Service
 public class FileStorageService {
 
+    public static final long MAX_FILE_SIZE = 10L * 1024 * 1024;
+
     private final Path uploadDir;
 
     public FileStorageService(@Value("${hefest.upload-dir:uploads}") String uploadDir) {
@@ -31,8 +33,14 @@ public class FileStorageService {
      * Throws IllegalStateException when the content type does not start with the expected prefix (e.g. "image/").
      */
     public String store(MultipartFile file, String expectedTypePrefix) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalStateException("Празен файл не може да бъде качен.");
+        }
+        if (file.getSize() > MAX_FILE_SIZE) {
+            throw new IllegalStateException("Файлът е твърде голям. Максималният размер е 10 MB.");
+        }
         String contentType = file.getContentType();
-        if (contentType == null || !contentType.toLowerCase(Locale.ROOT).startsWith(expectedTypePrefix)) {
+        if (!allowedContentType(contentType, expectedTypePrefix)) {
             throw new IllegalStateException("Файлът \"" + file.getOriginalFilename() + "\" не е от позволения тип.");
         }
 
@@ -44,6 +52,17 @@ public class FileStorageService {
             throw new UncheckedIOException("Неуспешно записване на файл.", e);
         }
         return fileName;
+    }
+
+    private static boolean allowedContentType(String contentType, String expectedTypePrefix) {
+        if (contentType == null) return false;
+        return switch (expectedTypePrefix) {
+            case "image/" -> java.util.Set.of("image/jpeg", "image/png", "image/gif", "image/webp")
+                    .contains(contentType.toLowerCase(Locale.ROOT));
+            case "video/" -> java.util.Set.of("video/mp4", "video/webm", "video/quicktime")
+                    .contains(contentType.toLowerCase(Locale.ROOT));
+            default -> false;
+        };
     }
 
     public void delete(String fileName) {

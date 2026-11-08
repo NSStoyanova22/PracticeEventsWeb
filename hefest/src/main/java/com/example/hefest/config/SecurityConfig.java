@@ -15,10 +15,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 import java.util.Locale;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -40,9 +42,22 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/login", "/register").permitAll()
+                        .requestMatchers("/css/**", "/login", "/register", "/403").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/chat/**").authenticated()
+                        .requestMatchers("/notifications/**").authenticated()
+                        .requestMatchers("/comments/**").authenticated()
+                        .requestMatchers("/my-lists", "/favorites/**", "/collections/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/events/*/comments").authenticated()
+                        .requestMatchers("/events/new").hasAnyRole("EDITOR", "ADMIN")
+                        .requestMatchers("/events/import/**").hasAnyRole("EDITOR", "ADMIN")
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/events/**").hasAnyRole("EDITOR", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/events/**").hasAnyRole("EDITOR", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/events/**").hasAnyRole("EDITOR", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/events").hasAnyRole("EDITOR", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/events/*").hasAnyRole("EDITOR", "ADMIN")
+                        .requestMatchers("/events/*/edit", "/events/*/delete", "/events/*/status", "/events/*/versions/*/restore", "/events/*/versions/compare").hasAnyRole("EDITOR", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/events/*/registrations/**").authenticated()
                         .requestMatchers("/events/**").permitAll()
                         .anyRequest().permitAll()
@@ -68,7 +83,8 @@ public class SecurityConfig {
                         })
                         .logoutSuccessUrl("/events")
                         .permitAll()
-                );
+                )
+                .exceptionHandling(exceptions -> exceptions.accessDeniedPage("/403"));
 
         return http.build();
     }
